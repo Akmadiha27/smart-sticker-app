@@ -7,14 +7,12 @@ authors = ["Madiha <akmadiha0207@gmail.com>"]
 [tool.poetry.dependencies]
 # Pin to Python 3.11 to avoid Pillow build issues on Render
 python = "3.11.*"
-
 fastapi = "0.110.0"
 uvicorn = "0.34.0"   # keep in sync with fastapi compatibility
 google-generativeai = "0.4.1"
    # works with Python 3.11 prebuilt wheels
 requests = "*"
 pydantic = "2.11.5"
-
 onnxruntime = "1.18.0"
 
 [build-system]
