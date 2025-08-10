@@ -150,6 +150,19 @@ async def validate(data: ValidateRequest):
         return MY_NUMBER
     return JSONResponse(status_code=403, content={"error": "invalid token"})
 
+@app.get("/mcp/")
+@app.post("/mcp/")
+async def mcp_handler(request: Request):
+    try:
+        data = await request.json()
+    except:
+        data = {}
+    return JSONResponse({
+        "status": "success",
+        "message": "MCP endpoint connected successfully",
+        "received": data
+    })
+
 @app.get("/.well-known/mcp.json")
 async def mcp_metadata():
     return {
