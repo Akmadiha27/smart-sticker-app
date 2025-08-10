@@ -4,7 +4,7 @@ import uuid
 import base64
 import requests
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from PIL import Image, ImageDraw, ImageFont
@@ -13,11 +13,9 @@ import google.generativeai as genai
 MY_NUMBER = "919440473900"
 
 # Optional: rembg for background removal
-# remove.bg API key from env
 REMOVEBG_API_KEY = os.getenv("REMOVEBG_API_KEY")
 if not REMOVEBG_API_KEY:
     print("WARNING: REMOVEBG_API_KEY not set.")
-
 
 # FastAPI instance
 app = FastAPI(title="Smart Sticker Maker MCP Server")
@@ -29,7 +27,7 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Environment variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-OWNER_PHONE = os.getenv("OWNER_PHONE", "919440473900")
+OWNER_PHONE = os.getenv("OWNER_PHONE", MY_NUMBER)
 VALIDATE_TOKEN = os.getenv("VALIDATE_TOKEN", "stickypuch")
 
 if GEMINI_API_KEY:
@@ -56,9 +54,6 @@ def _decode_base64_image(b64str: str) -> Image.Image:
     return Image.open(io.BytesIO(data)).convert("RGBA")
 
 def _remove_background(img: Image.Image) -> Image.Image:
-    """
-    Uses remove.bg API to remove background from an image.
-    """
     if not REMOVEBG_API_KEY:
         print("No remove.bg API key provided. Returning original image.")
         return img
@@ -84,7 +79,6 @@ def _remove_background(img: Image.Image) -> Image.Image:
     except Exception as e:
         print("remove.bg request failed:", e)
         return img
-
 
 def _resize_and_center(img: Image.Image, size=(512, 512)) -> Image.Image:
     canvas = Image.new("RGBA", size, (0, 0, 0, 0))
@@ -171,6 +165,25 @@ async def mcp_metadata():
                         "bearer_token": {"type": "string"}
                     },
                     "required": ["bearer_token"]
+                }
+            },
+            {
+                "name": "generate_sticker",
+                "description": "Generate a mood-based sticker with optional caption",
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "image_base64": {"type": "string"},
+                        "image_url": {"type": "string"},
+                        "mood": {
+                            "type": "string",
+                            "enum": [
+                                "funny", "romantic", "sarcastic",
+                                "motivational", "cute", "angry",
+                                "sad", "neutral"
+                            ]
+                        }
+                    }
                 }
             }
         ]
