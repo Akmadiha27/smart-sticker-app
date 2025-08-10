@@ -11,11 +11,11 @@ from PIL import Image, ImageDraw, ImageFont
 import google.generativeai as genai
 
 # Optional: rembg for background removal
-try:
-    from rembg import remove
-    REMBG_AVAILABLE = True
-except Exception:
-    REMBG_AVAILABLE = False
+# remove.bg API key from env
+REMOVEBG_API_KEY = os.getenv("REMOVEBG_API_KEY")
+if not REMOVEBG_API_KEY:
+    print("WARNING: REMOVEBG_API_KEY not set.")
+
 
 # FastAPI instance
 app = FastAPI(title="Smart Sticker Maker MCP Server")
@@ -54,13 +54,35 @@ def _decode_base64_image(b64str: str) -> Image.Image:
     return Image.open(io.BytesIO(data)).convert("RGBA")
 
 def _remove_background(img: Image.Image) -> Image.Image:
-    if REMBG_AVAILABLE:
-        try:
-            return remove(img).convert("RGBA")
-        except Exception as e:
-            print("rembg failed:", e)
+    """
+    Uses remove.bg API to remove background from an image.
+    """
+    if not REMOVEBG_API_KEY:
+        print("No remove.bg API key provided. Returning original image.")
+        return img
+
+    try:
+        buffered = io.BytesIO()
+        img.save(buffered, format="PNG")
+        buffered.seek(0)
+
+        response = requests.post(
+            "https://api.remove.bg/v1.0/removebg",
+            files={"image_file": buffered},
+            data={"size": "auto"},
+            headers={"X-Api-Key": REMOVEBG_API_KEY},
+            timeout=60
+        )
+
+        if response.status_code == 200:
+            return Image.open(io.BytesIO(response.content)).convert("RGBA")
+        else:
+            print(f"remove.bg API failed: {response.status_code} - {response.text}")
             return img
-    return img
+    except Exception as e:
+        print("remove.bg request failed:", e)
+        return img
+
 
 def _resize_and_center(img: Image.Image, size=(512, 512)) -> Image.Image:
     canvas = Image.new("RGBA", size, (0, 0, 0, 0))
