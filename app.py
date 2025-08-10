@@ -10,6 +10,8 @@ from pydantic import BaseModel
 from PIL import Image, ImageDraw, ImageFont
 import google.generativeai as genai
 
+MY_NUMBER = "{91}{9440473900}"
+
 # Optional: rembg for background removal
 # remove.bg API key from env
 REMOVEBG_API_KEY = os.getenv("REMOVEBG_API_KEY")
@@ -151,7 +153,7 @@ class StickerRequest(BaseModel):
 @app.post("/validate")
 async def validate(data: ValidateRequest):
     if data.bearer_token == VALIDATE_TOKEN:
-        return str(OWNER_PHONE)
+        return MY_NUMBER
     return JSONResponse(status_code=403, content={"error": "invalid token"})
 
 @app.get("/.well-known/mcp.json")
