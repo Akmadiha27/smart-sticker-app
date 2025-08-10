@@ -236,6 +236,8 @@ async def validate(data: ValidateRequest):
         return PlainTextResponse(str(OWNER_PHONE))
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid token")
 
+logging.basicConfig(level=logging.INFO)
+
 @app.get("/mcp")
 @app.post("/mcp")
 async def mcp_handler(request: Request):
@@ -243,6 +245,14 @@ async def mcp_handler(request: Request):
         data = await request.json()
     except Exception:
         data = {}
+
+    headers = dict(request.headers)
+    client_host = request.client.host
+
+    logging.info(f"Received /mcp request from {client_host}")
+    logging.info(f"Headers: {headers}")
+    logging.info(f"Payload: {data}")
+
     return JSONResponse({
         "status": "success",
         "message": "MCP endpoint connected successfully",
