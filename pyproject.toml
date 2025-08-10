@@ -3,14 +3,19 @@ name = "smart-sticker-mcp"
 version = "0.1.0"
 description = "AI-powered Smart Sticker MCP Server"
 authors = ["Your Name <you@example.com>"]
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "3.11.*"
 fastapi = "0.110.0"
 uvicorn = "0.34.3"
 google-generativeai = "0.4.1"
-pillow = "10.2.0"
+pillow = "10.2.0"  # works fine with Python 3.11
 requests = "*"
 pydantic = "2.11.5"
 rembg = "2.0.50"
 onnxruntime = "1.18.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
