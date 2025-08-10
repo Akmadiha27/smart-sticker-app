@@ -147,7 +147,8 @@ class StickerRequest(BaseModel):
 @app.post("/validate")
 async def validate(data: ValidateRequest):
     if data.bearer_token == VALIDATE_TOKEN:
-        return MY_NUMBER
+        # Ensure it's a string in {country_code}{number} format
+        return str(MY_NUMBER)
     return JSONResponse(status_code=403, content={"error": "invalid token"})
 
 @app.get("/mcp/")
