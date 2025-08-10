@@ -12,3 +12,4 @@ google-auth-httplib2==0.2.0
 pydantic==2.11.5
 pillow==10.2.0
 rembg==2.0.29
+numpy==1.26.4
