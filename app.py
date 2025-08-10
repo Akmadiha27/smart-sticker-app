@@ -154,6 +154,26 @@ async def validate(data: ValidateRequest):
         return {"number": OWNER_PHONE}
     return JSONResponse(status_code=403, content={"error": "invalid token"})
 
+@app.get("/.well-known/mcp.json")
+async def mcp_metadata():
+    return {
+        "name": "Smart Sticker MCP",
+        "version": "1.0",
+        "tools": [
+            {
+                "name": "validate",
+                "description": "Validate token and return owner phone",
+                "input_schema": {
+                    "type": "object",
+                    "properties": {
+                        "bearer_token": {"type": "string"}
+                    },
+                    "required": ["bearer_token"]
+                }
+            }
+        ]
+    }
+
 @app.post("/generate_sticker")
 async def generate_sticker(payload: StickerRequest, request: Request):
     try:
