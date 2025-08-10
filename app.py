@@ -239,3 +239,7 @@ async def generate_sticker(payload: StickerRequest, request: Request):
 async def index():
     return {"status": "Smart Sticker MCP server running"}
 
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("app:app", host="0.0.0.0", port=port)
