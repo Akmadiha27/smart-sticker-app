@@ -9,4 +9,6 @@ fastapi==0.110.0
 google-api-python-client==2.153.0
 google-auth-oauthlib==1.2.2
 google-auth-httplib2==0.2.0
-pydantic== 2.11.5
+pydantic==2.11.5
+pillow==10.3.0
+rembg==2.0.29
