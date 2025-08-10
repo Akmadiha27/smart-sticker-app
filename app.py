@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from PIL import Image, ImageDraw, ImageFont
 import google.generativeai as genai
 
-MY_NUMBER = "{91}{9440473900}"
+MY_NUMBER = "919440473900"
 
 # Optional: rembg for background removal
 # remove.bg API key from env
